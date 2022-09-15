@@ -1,0 +1,66 @@
+service: aws-node-http-api-serverless
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  environment:
+    TABLE_NAME:
+      Ref: PeopleTable
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [PeopleTable, Arn]
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  createResource:
+    handler: src/addResource.addResource
+    events:
+      - httpApi:
+          path: /resources
+          method: post
+
+  getResources:
+    handler: src/getResources.getResources
+    events:
+      - httpApi:
+          path: /resources
+          method: get
+
+  fillResources:
+    handler: src/fillResources.fillResources
+    events:
+      - httpApi:
+          path: /fillResources
+          method: post
+
+resources:
+  Resources:
+    PeopleTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PeopleTable
+        AttributeDefinitions:
+          - AttributeName: nombre
+            AttributeType: S
+        KeySchema:
+          - AttributeName: nombre
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

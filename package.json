@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "aws-sdk": "^2.1215.0",
+    "bluebird": "^3.7.2",
+    "swapi-node": "^0.7.0"
+  }
+}
