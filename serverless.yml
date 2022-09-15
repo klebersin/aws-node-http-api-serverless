@@ -47,7 +47,7 @@ functions:
     events:
       - httpApi:
           path: /fillResources
-          method: post
+          method: get
 
 resources:
   Resources:

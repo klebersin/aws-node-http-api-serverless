@@ -1,11 +1,9 @@
 const swapi = require("swapi-node");
-const AWS = require("aws-sdk");
 const { attributes } = require("./utils");
 const Promise = require("bluebird");
 
 const fillResources = async (event) => {
   try {
-    const dynamodb = new AWS.DynamoDB();
     const resources = [];
     await swapi
       .get("https://swapi.dev/api/people/")
@@ -34,7 +32,7 @@ const fillResources = async (event) => {
           statusCode: 500,
           body: JSON.stringify(
             {
-              message: "Something went wrongggg",
+              message: "Something went wrong",
               error: err,
             },
             null,
@@ -48,12 +46,6 @@ const fillResources = async (event) => {
       Object.keys(resource).forEach(
         (at) => (newItem[attributes[at] ?? at] = resource[at].toString())
       );
-      await dynamodb
-        .put({
-          TableName: process.env.TABLE_NAME,
-          Item: newItem,
-        })
-        .promise();
       return newItem;
     });
 
